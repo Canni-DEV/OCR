@@ -1,0 +1,7 @@
+grpcio>=1.62.0
+grpcio-tools>=1.62.0
+protobuf>=4.25.0
+paddleocr>=2.7.0
+paddlepaddle>=2.5.0; platform_system != 'Windows'
+paddlepaddle-gpu>=2.5.0; platform_system == 'Windows'
+python-dotenv>=1.0.0
