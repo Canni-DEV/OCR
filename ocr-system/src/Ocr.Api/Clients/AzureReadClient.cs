@@ -7,12 +7,20 @@ using Polly.Timeout;
 
 namespace Ocr.Api.Clients;
 
+/// <summary>
+/// Client for invoking Azure Cognitive Services Read endpoint.
+/// </summary>
 public class AzureReadClient
 {
     private readonly HttpClient _httpClient;
     private readonly AzureOptions _options;
     private readonly AsyncPolicy<string?> _policy;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AzureReadClient"/> class.
+    /// </summary>
+    /// <param name="httpClient">HTTP client used to send requests.</param>
+    /// <param name="options">Azure configuration options.</param>
     public AzureReadClient(HttpClient httpClient, IOptions<AzureOptions> options)
     {
         _httpClient = httpClient;
@@ -28,6 +36,13 @@ public class AzureReadClient
         _policy = Policy.WrapAsync(retry, timeout);
     }
 
+    /// <summary>
+    /// Sends the specified file to Azure Read and returns the concatenated text result.
+    /// </summary>
+    /// <param name="filePath">Path to the file to read.</param>
+    /// <param name="requestId">Identifier for correlating the request.</param>
+    /// <param name="cancellationToken">Token to observe cancellation requests.</param>
+    /// <returns>OCR text if available; otherwise the raw payload or null.</returns>
     public async Task<string?> ReadTextAsync(string filePath, string requestId, CancellationToken cancellationToken)
     {
         return await _policy.ExecuteAsync(async ct =>

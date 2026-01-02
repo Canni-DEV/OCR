@@ -4,18 +4,30 @@ using Ocr.Api.Options;
 
 namespace Ocr.Api.Services;
 
+/// <summary>
+/// Lightweight in-memory rate limiting middleware.
+/// </summary>
 public class RateLimitMiddleware
 {
     private static readonly ConcurrentDictionary<string, Counter> Counters = new();
     private readonly RequestDelegate _next;
     private readonly RateLimitOptions _options;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RateLimitMiddleware"/> class.
+    /// </summary>
+    /// <param name="next">Next request delegate in the pipeline.</param>
+    /// <param name="options">Rate limit configuration options.</param>
     public RateLimitMiddleware(RequestDelegate next, IOptions<RateLimitOptions> options)
     {
         _next = next;
         _options = options.Value;
     }
 
+    /// <summary>
+    /// Invokes the middleware to enforce request rate limits.
+    /// </summary>
+    /// <param name="context">Current HTTP context.</param>
     public async Task InvokeAsync(HttpContext context)
     {
         if (!_options.Enabled)
