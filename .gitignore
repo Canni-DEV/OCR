@@ -1,0 +1,56 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Dotnet
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.ide/
+*.DotSettings.user
+*.local.json
+*.log
+/TestResults/
+/**/*.user
+/**/*.rsuser
+
+# Build outputs
+publish/
+artifacts/
+
+# Packages
+*.nupkg
+packages/
+
+# Rider/VSCode
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+.env
+.venv/
+.env*/
+venv/
+ENV/
+
+# Coverage
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# Generated gRPC
+ocr-system/src/Ocr.Worker.Paddle/ocrworker_pb2.py
+ocr-system/src/Ocr.Worker.Paddle/ocrworker_pb2_grpc.py
+
+# Temp storage
+ocr-system/src/Ocr.Api/temp/
