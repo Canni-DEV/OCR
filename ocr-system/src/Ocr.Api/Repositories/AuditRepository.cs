@@ -7,17 +7,30 @@ using Ocr.Api.Options;
 
 namespace Ocr.Api.Repositories;
 
+/// <summary>
+/// Persists audit information for OCR requests.
+/// </summary>
 public class AuditRepository
 {
     private readonly DbOptions _options;
     private readonly ILogger<AuditRepository> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuditRepository"/> class.
+    /// </summary>
+    /// <param name="options">Database configuration options.</param>
+    /// <param name="logger">Logger for capturing persistence issues.</param>
     public AuditRepository(IOptions<DbOptions> options, ILogger<AuditRepository> logger)
     {
         _options = options.Value;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Inserts a new audit record into the database.
+    /// </summary>
+    /// <param name="record">Audit record to persist.</param>
+    /// <param name="cancellationToken">Token to observe cancellation.</param>
     public async Task InsertAsync(AuditRecord record, CancellationToken cancellationToken)
     {
         try

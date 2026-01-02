@@ -7,10 +7,16 @@ using Polly.Timeout;
 
 namespace Ocr.Api.Clients;
 
+/// <summary>
+/// gRPC client wrapper for communicating with PaddleOCR workers.
+/// </summary>
 public class PaddleOcrClient
 {
     private readonly AsyncPolicy _policy;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PaddleOcrClient"/> class.
+    /// </summary>
     public PaddleOcrClient()
     {
         var retry = Policy
@@ -22,6 +28,15 @@ public class PaddleOcrClient
         _policy = Policy.WrapAsync(retry, timeout);
     }
 
+    /// <summary>
+    /// Calls a PaddleOCR worker to extract text from a file.
+    /// </summary>
+    /// <param name="endpoint">The worker endpoint to call.</param>
+    /// <param name="filePath">Path to the file to process.</param>
+    /// <param name="requestId">Identifier for correlating the request.</param>
+    /// <param name="language">Language code for OCR processing.</param>
+    /// <param name="cancellationToken">Token to observe cancellation.</param>
+    /// <returns>Structured OCR result describing success, text and metadata.</returns>
     public async Task<ExtractTextResult> ExtractTextAsync(string endpoint, string filePath, string requestId, string language, CancellationToken cancellationToken)
     {
         return await _policy.ExecuteAsync(async ct =>

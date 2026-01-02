@@ -12,6 +12,9 @@ namespace Ocr.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+/// <summary>
+/// Handles OCR requests routed through the API.
+/// </summary>
 public class OcrController : ControllerBase
 {
     private static readonly string[] AllowedMimeTypes = { "image/png", "image/jpeg", "application/pdf" };
@@ -26,6 +29,18 @@ public class OcrController : ControllerBase
     private readonly WorkerOptions _workerOptions;
     private readonly OcrOptions _ocrOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OcrController"/> class.
+    /// </summary>
+    /// <param name="tempFileService">Service for storing temporary uploaded files.</param>
+    /// <param name="workerPoolService">Service that manages PaddleOCR workers.</param>
+    /// <param name="paddleClient">gRPC client for PaddleOCR workers.</param>
+    /// <param name="azureClient">HTTP client for Azure Read fallback.</param>
+    /// <param name="postProcessor">Service to normalize OCR results.</param>
+    /// <param name="usageLimiter">Azure usage limiter.</param>
+    /// <param name="auditRepository">Repository for audit trail persistence.</param>
+    /// <param name="workerOptions">Worker configuration options.</param>
+    /// <param name="ocrOptions">OCR configuration options.</param>
     public OcrController(
         TempFileService tempFileService,
         WorkerPoolService workerPoolService,
@@ -53,6 +68,12 @@ public class OcrController : ControllerBase
     [ProducesResponseType(typeof(OcrResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable)]
+    /// <summary>
+    /// Processes an uploaded file through OCR and returns structured text results.
+    /// </summary>
+    /// <param name="file">File to process.</param>
+    /// <param name="cancellationToken">Token to observe cancellation.</param>
+    /// <returns>The OCR response or a problem description.</returns>
     public async Task<IActionResult> Post([FromForm] IFormFile? file, CancellationToken cancellationToken)
     {
         if (file is null)
