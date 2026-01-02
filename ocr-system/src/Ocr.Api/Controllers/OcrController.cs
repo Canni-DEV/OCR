@@ -10,11 +10,11 @@ using Ocr.Api.Processing;
 
 namespace Ocr.Api.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
 /// <summary>
 /// Handles OCR requests routed through the API.
 /// </summary>
+[ApiController]
+[Route("api/[controller]")]
 public class OcrController : ControllerBase
 {
     private static readonly string[] AllowedMimeTypes = { "image/png", "image/jpeg", "application/pdf" };
@@ -63,17 +63,17 @@ public class OcrController : ControllerBase
         _ocrOptions = ocrOptions.Value;
     }
 
-    [HttpPost]
-    [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)]
-    [ProducesResponseType(typeof(OcrResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable)]
     /// <summary>
     /// Processes an uploaded file through OCR and returns structured text results.
     /// </summary>
     /// <param name="file">File to process.</param>
     /// <param name="cancellationToken">Token to observe cancellation.</param>
     /// <returns>The OCR response or a problem description.</returns>
+    [HttpPost]
+    [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)]
+    [ProducesResponseType(typeof(OcrResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable)]
     public async Task<IActionResult> Post([FromForm] IFormFile? file, CancellationToken cancellationToken)
     {
         if (file is null)
