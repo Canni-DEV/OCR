@@ -2,7 +2,9 @@ param(
     [string]$WorkerPath,
     [string]$PythonPath = "python.exe",
     [string]$VenvName = ".venv",
-    [switch]$ForceRecreate
+    [string]$ProtoVenvName = ".venv-protos",
+    [switch]$ForceRecreate,
+    [switch]$InstallProtoTools
 )
 
 $ErrorActionPreference = "Stop"
@@ -47,3 +49,35 @@ Write-Host "Installing dependencies from requirements.txt..."
 
 Write-Host "Virtual environment ready at $venvPath"
 Write-Host "Use '$venvPython server.py' to start the worker."
+
+if ($InstallProtoTools) {
+    $protoRequirements = Join-Path $WorkerPath "requirements.protos.txt"
+    if (-not (Test-Path $protoRequirements)) {
+        Write-Warning "Could not find requirements.protos.txt; skipping proto tool installation."
+        return
+    }
+
+    $protoVenvPath = Join-Path $WorkerPath $ProtoVenvName
+    if ($ForceRecreate -and (Test-Path $protoVenvPath)) {
+        Remove-Item $protoVenvPath -Recurse -Force
+    }
+
+    if (-not (Test-Path $protoVenvPath)) {
+        Write-Host "Creating virtual environment for proto tools in $protoVenvPath ..."
+        & $PythonPath -m venv $protoVenvPath
+    }
+
+    $protoVenvPython = Join-Path $protoVenvPath "Scripts/python.exe"
+    if (-not (Test-Path $protoVenvPython)) {
+        throw "Python executable not found in virtual environment: $protoVenvPython"
+    }
+
+    Write-Host "Upgrading pip in proto tools environment..."
+    & $protoVenvPython -m pip install --upgrade pip
+
+    Write-Host "Installing proto-generation dependencies..."
+    & $protoVenvPython -m pip install -r $protoRequirements
+
+    Write-Host "Proto tools virtual environment ready at $protoVenvPath"
+    Write-Host "Use '$protoVenvPython -m grpc_tools.protoc ...' to regenerate stubs."
+}
