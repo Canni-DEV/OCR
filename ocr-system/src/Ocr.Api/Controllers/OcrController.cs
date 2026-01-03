@@ -66,16 +66,19 @@ public class OcrController : ControllerBase
     /// <summary>
     /// Processes an uploaded file through OCR and returns structured text results.
     /// </summary>
-    /// <param name="file">File to process.</param>
+    /// <param name="request">Request containing the file to process.</param>
     /// <param name="cancellationToken">Token to observe cancellation.</param>
     /// <returns>The OCR response or a problem description.</returns>
     [HttpPost]
+    [Consumes("multipart/form-data")]
     [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)]
     [ProducesResponseType(typeof(OcrResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<IActionResult> Post([FromForm] IFormFile? file, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post([FromForm] OcrRequest request, CancellationToken cancellationToken)
     {
+        var file = request?.File;
+
         if (file is null)
         {
             return BadRequest(Problem("File is required"));
