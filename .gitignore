@@ -49,10 +49,6 @@ coverage.xml
 htmlcov/
 .pytest_cache/
 
-# Generated gRPC
-ocr-system/src/Ocr.Worker.Paddle/ocrworker_pb2.py
-ocr-system/src/Ocr.Worker.Paddle/ocrworker_pb2_grpc.py
-
 # Temp storage
 ocr-system/src/Ocr.Api/temp/
 
