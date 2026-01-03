@@ -1,3 +1,7 @@
+param(
+    [string]$PythonPath = "python"
+)
+
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $workerPath = Join-Path $root "src/Ocr.Worker.Paddle"
