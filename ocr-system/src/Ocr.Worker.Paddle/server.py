@@ -14,22 +14,14 @@ try:
 except ImportError:  # pragma: no cover - ensures stubs can be generated on first run
     base_dir = Path(__file__).resolve().parents[2]
     proto_path = base_dir / "proto" / "ocrworker.proto"
+    message = (
+        "Protocol buffer stubs are missing. "
+        "Run scripts/generate_protos.ps1 (Windows) or scripts/generate_protos.sh (Unix) "
+        "to regenerate ocrworker_pb2.py and ocrworker_pb2_grpc.py before starting the worker."
+    )
     if proto_path.exists():
-        subprocess.check_call(
-            [
-                sys.executable,
-                "-m",
-                "grpc_tools.protoc",
-                f"-I{proto_path.parent}",
-                f"--python_out={Path(__file__).parent}",
-                f"--grpc_python_out={Path(__file__).parent}",
-                str(proto_path),
-            ]
-        )
-        import ocrworker_pb2  # type: ignore
-        import ocrworker_pb2_grpc  # type: ignore
-    else:
-        raise
+        raise ImportError(message) from None
+    raise
 
 logger = logging.getLogger(__name__)
 
