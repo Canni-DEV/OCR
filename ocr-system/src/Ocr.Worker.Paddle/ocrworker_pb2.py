@@ -12,7 +12,11 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+
+
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0focrworker.proto\x12\tocrworker\"\x1e\n\x0bPingRequest\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x1f\n\x0cPingResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\"d\n\x12\x45xtractTextRequest\x12\x12\n\nrequest_id\x18\x01 \x01(\t\x12\x11\n\tfile_path\x18\x02 \x01(\t\x12\x10\n\x08language\x18\x03 \x01(\t\x12\x15\n\ruse_angle_cls\x18\x04 \x01(\x08\"R\n\x13\x45xtractTextResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0c\n\x04text\x18\x02 \x01(\t\x12\r\n\x05\x65rror\x18\x03 \x01(\t\x12\x12\n\nelapsed_ms\x18\x04 \x01(\x03\x32\x92\x01\n\tOcrWorker\x12\x37\n\x04Ping\x12\x16.ocrworker.PingRequest\x1a\x17.ocrworker.PingResponse\x12L\n\x0b\x45xtractText\x12\x1d.ocrworker.ExtractTextRequest\x1a\x1e.ocrworker.ExtractTextResponseB\x1e\n\x0f\x63om.example.ocrP\x01\xaa\x02\x08Ocr.Grpcb\x06proto3')
+
+
 
 _PINGREQUEST = DESCRIPTOR.message_types_by_name['PingRequest']
 _PINGRESPONSE = DESCRIPTOR.message_types_by_name['PingResponse']
@@ -46,10 +50,19 @@ ExtractTextResponse = _reflection.GeneratedProtocolMessageType('ExtractTextRespo
   })
 _sym_db.RegisterMessage(ExtractTextResponse)
 
-_PINGREQUEST._options = None
-_PINGRESPONSE._options = None
-_EXTRACTTEXTREQUEST._options = None
-_EXTRACTTEXTRESPONSE._options = None
-DESCRIPTOR._options = None
-DESCRIPTOR._serialized_options = b'\n\017com.example.ocrP\001\252\002\010Ocr.Grpc'
+_OCRWORKER = DESCRIPTOR.services_by_name['OcrWorker']
+if _descriptor._USE_C_DESCRIPTORS == False:
+
+  DESCRIPTOR._options = None
+  DESCRIPTOR._serialized_options = b'\n\017com.example.ocrP\001\252\002\010Ocr.Grpc'
+  _PINGREQUEST._serialized_start=30
+  _PINGREQUEST._serialized_end=60
+  _PINGRESPONSE._serialized_start=62
+  _PINGRESPONSE._serialized_end=93
+  _EXTRACTTEXTREQUEST._serialized_start=95
+  _EXTRACTTEXTREQUEST._serialized_end=195
+  _EXTRACTTEXTRESPONSE._serialized_start=197
+  _EXTRACTTEXTRESPONSE._serialized_end=279
+  _OCRWORKER._serialized_start=282
+  _OCRWORKER._serialized_end=428
 # @@protoc_insertion_point(module_scope)
