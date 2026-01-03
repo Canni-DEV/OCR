@@ -1,7 +1,7 @@
 param(
     [string]$ServiceName = "OcrWorkerPaddle",
     [string]$Port = "50051",
-    [string]$WorkingDirectory = "C:\\ocr-system\\src\\Ocr.Worker.Paddle",
+    [string]$WorkingDirectory,
     [string]$PythonPath,
     [string]$VenvPath,
     [string]$VenvName = ".venv",
@@ -37,6 +37,20 @@ function Get-NssmPath {
     throw "nssm.exe is required to install the worker as a service. Place it next to this script or add it to PATH."
 }
 
+function Resolve-WorkingDirectory {
+    param(
+        [string]$WorkingDirectory,
+        [string]$ScriptDirectory
+    )
+
+    if ($WorkingDirectory) {
+        return (Resolve-Path $WorkingDirectory).Path
+    }
+
+    $workerRoot = Split-Path $ScriptDirectory -Parent
+    return (Resolve-Path $workerRoot).Path
+}
+
 function Resolve-PythonPath {
     param(
         [string]$PythonPath,
@@ -66,16 +80,19 @@ if (-not (Test-IsAdministrator)) {
     throw "Administrator access is required to install the service. Re-run PowerShell como Administrador."
 }
 
-if (-not (Test-Path $WorkingDirectory)) {
-    throw "Working directory '$WorkingDirectory' does not exist."
+$scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$resolvedWorkingDirectory = Resolve-WorkingDirectory -WorkingDirectory $WorkingDirectory -ScriptDirectory $scriptDirectory
+
+if (-not (Test-Path $resolvedWorkingDirectory)) {
+    throw "Working directory '$resolvedWorkingDirectory' does not exist."
 }
 
-$scriptPath = Join-Path $WorkingDirectory "server.py"
+$scriptPath = Join-Path $resolvedWorkingDirectory "server.py"
 if (-not (Test-Path $scriptPath)) {
     throw "Could not find server.py at '$scriptPath'. Verify WorkingDirectory."
 }
 
-$resolvedPython = Resolve-PythonPath -PythonPath $PythonPath -WorkingDirectory $WorkingDirectory -VenvPath $VenvPath -VenvName $VenvName
+$resolvedPython = Resolve-PythonPath -PythonPath $PythonPath -WorkingDirectory $resolvedWorkingDirectory -VenvPath $VenvPath -VenvName $VenvName
 
 $env:WORKER_PORT = $Port
 $env:WORKER_LANG = if ([string]::IsNullOrWhiteSpace($Lang)) { "es" } else { $Lang }
@@ -84,12 +101,11 @@ $envVariables = @("WORKER_PORT=$Port", "WORKER_LANG=$($env:WORKER_LANG)", "WORKE
 $useAngleCls = -not $DisableAngleCls
 $envVariables += "PADDLE_USE_ANGLE_CLS=$($useAngleCls.ToString().ToLower())"
 
-$scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $nssm = Get-NssmPath -ScriptDirectory $scriptDirectory
 
 Write-Host "Installing service '$ServiceName' using Python at '$resolvedPython'..."
 & $nssm install $ServiceName $resolvedPython "$scriptPath" | Out-Null
-& $nssm set $ServiceName AppDirectory $WorkingDirectory | Out-Null
+& $nssm set $ServiceName AppDirectory $resolvedWorkingDirectory | Out-Null
 & $nssm set $ServiceName AppEnvironmentExtra $envVariables | Out-Null
 
 Write-Host "Service $ServiceName configured on port $Port (lang=$($env:WORKER_LANG), angle_cls=$useAngleCls, concurrency=$Concurrency)"
