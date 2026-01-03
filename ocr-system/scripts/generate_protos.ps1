@@ -11,10 +11,7 @@ $protoRequirements = Join-Path $workerPath "requirements.protos.txt"
 # grpcio-tools 1.48.x (needed to stay compatible with protobuf 3.20.x) does not
 # ship wheels for Python 3.12+, so fail fast with a clear hint if the supplied
 # Python is too new.
-$pythonVersion = & $PythonPath - <<'PY'
-import sys
-print(f"{sys.version_info.major}.{sys.version_info.minor}")
-PY
+$pythonVersion = & $PythonPath -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
 
 if ([version]$pythonVersion -ge [version]"3.12") {
     throw "grpcio-tools 1.48.x only provides wheels up to Python 3.11. Run this script with Python 3.10/3.11 (use -PythonPath) to regenerate stubs."
