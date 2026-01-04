@@ -25,7 +25,7 @@ public class OcrController : ControllerBase
     private readonly AzureReadClient _azureClient;
     private readonly TextPostProcessor _postProcessor;
     private readonly AzureUsageLimiter _usageLimiter;
-    private readonly AuditRepository _auditRepository;
+    private readonly IAuditRepository _auditRepository;
     private readonly WorkerOptions _workerOptions;
     private readonly OcrOptions _ocrOptions;
 
@@ -48,7 +48,7 @@ public class OcrController : ControllerBase
         AzureReadClient azureClient,
         TextPostProcessor postProcessor,
         AzureUsageLimiter usageLimiter,
-        AuditRepository auditRepository,
+        IAuditRepository auditRepository,
         IOptions<WorkerOptions> workerOptions,
         IOptions<OcrOptions> ocrOptions)
     {
