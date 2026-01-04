@@ -2,6 +2,7 @@ using System.Globalization;
 using System.IO.Abstractions;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Ocr.Api.Clients;
 using Ocr.Api.Options;
@@ -27,7 +28,15 @@ builder.Services.AddHttpClient<AzureReadClient>();
 builder.Services.AddSingleton<PaddleOcrClient>();
 builder.Services.AddSingleton<TextPostProcessor>();
 builder.Services.AddSingleton<AzureUsageLimiter>();
-builder.Services.AddSingleton<AuditRepository>();
+builder.Services.AddSingleton<IAuditRepository>(sp =>
+{
+    var dbOptions = sp.GetRequiredService<IOptions<DbOptions>>();
+    var provider = dbOptions.Value.Provider ?? string.Empty;
+
+    return provider.Equals("litedb", StringComparison.OrdinalIgnoreCase)
+        ? ActivatorUtilities.CreateInstance<LiteDbAuditRepository>(sp)
+        : ActivatorUtilities.CreateInstance<SqlAuditRepository>(sp);
+});
 
 builder.Services.AddControllers(options =>
 {
